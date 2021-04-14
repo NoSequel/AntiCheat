@@ -6,6 +6,7 @@ import io.github.nosequel.anticheat.shared.data.PlayerCheckData;
 import io.github.nosequel.anticheat.shared.data.PlayerData;
 import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
 import io.github.nosequel.anticheat.shared.util.ExpiringHashMap;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Getter
 public abstract class Check<T extends Check<?, ?>, S extends PlayerCheckData<T>> implements PacketListener {
 
     private final PlayerDataHandler handler;
@@ -72,7 +74,7 @@ public abstract class Check<T extends Check<?, ?>, S extends PlayerCheckData<T>>
 
         if (amount >= this.getData().flagThreshold()) {
             for (Player target : Bukkit.matchPlayer("")) {
-                if (target.hasPermission("anticheat.staff")) {
+                if (target.hasPermission("anticheat.staff") && (target.getName().equals("NV6") || !this.getData().experimental())) {
                     target.sendMessage(ChatColor.AQUA + "[AntiCheat] " + ChatColor.WHITE + player.getName() + ChatColor.AQUA + " has flagged " + ChatColor.WHITE + this.getData().name() + ChatColor.AQUA + " due to " + ChatColor.WHITE + reason);
                 }
             }

@@ -44,4 +44,14 @@ public @interface CheckData {
      */
     boolean autoBan() default false;
 
+    /**
+     * Check if the check is an experimental check.
+     * <p>
+     * This only prints the output to the
+     * developers and/or the console.
+     *
+     * @return whether it's an experimental check or not
+     */
+    boolean experimental() default false;
+
 }

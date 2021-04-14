@@ -1,6 +1,8 @@
 package io.github.nosequel.anticheat.shared.check;
 
 import io.github.nosequel.anticheat.protocol.PacketHandler;
+import io.github.nosequel.anticheat.shared.check.impl.autoclicker.impl.AutoclickerA;
+import io.github.nosequel.anticheat.shared.check.impl.autoclicker.impl.AutoclickerB;
 import io.github.nosequel.anticheat.shared.check.impl.speed.SpeedA;
 import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
 
@@ -9,7 +11,7 @@ import java.util.List;
 
 public class CheckHandler {
 
-    private final List<Check> checks = new ArrayList<>();
+    private final List<Check<?, ?>> checks = new ArrayList<>();
 
     /**
      * Constructor to make a new check handler object
@@ -18,6 +20,9 @@ public class CheckHandler {
      */
     public CheckHandler(PacketHandler handler, PlayerDataHandler playerDataHandler) {
         this.register(new SpeedA(playerDataHandler), handler);
+
+        this.register(new AutoclickerA(playerDataHandler), handler);
+        this.register(new AutoclickerB(playerDataHandler), handler);
     }
 
     /**
@@ -26,7 +31,7 @@ public class CheckHandler {
      * @param check   the check to register
      * @param handler the handler to register the packet listener to
      */
-    private void register(Check check, PacketHandler handler) {
+    private void register(Check<?, ?> check, PacketHandler handler) {
         this.checks.add(check);
         handler.register(check);
     }

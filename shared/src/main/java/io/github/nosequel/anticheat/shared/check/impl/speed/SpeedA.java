@@ -10,11 +10,10 @@ import io.github.nosequel.anticheat.shared.check.impl.speed.data.impl.SpeedAData
 import io.github.nosequel.anticheat.shared.data.PlayerCheckData;
 import io.github.nosequel.anticheat.shared.data.PlayerData;
 import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-@CheckData(name = "Speed A", flagThreshold = 20)
+@CheckData(name = "Speed A", flagThreshold = 5, experimental = true)
 public class SpeedA extends Check<SpeedA, SpeedAData> {
 
     public SpeedA(PlayerDataHandler handler) {
@@ -37,34 +36,31 @@ public class SpeedA extends Check<SpeedA, SpeedAData> {
             final PlayInFlyingPacket packet = (PlayInFlyingPacket) object;
             final PlayerStateTracker tracker = ProtocolHandler.getInstance().getPlayerStateTracker();
 
-            final double horizontalOffset = Math.hypot(packet.getX() - data.getLastX(), packet.getZ() - data.getLastZ());
-            final double verticalOffset = (packet.getY() - data.getLastY());
+            final double distanceX = packet.getX() - data.getLastX();
+            final double distanceZ = packet.getZ() - data.getLastZ();
 
-            double jumpHeight = 0.42 + this.getJumpBoost(player) * 0.1;
+            final double horizontalOffset = (distanceX * distanceX) + (distanceZ * distanceZ);
+
             double movementSpeed = tracker.getMovementSpeed(player);
+            double friction = 0.91 * tracker.getFriction(player.getLocation());
 
-            if (tracker.isOnGround(player)) {
-                movementSpeed *= 1.3;
-                movementSpeed *= 0.16277136 / Math.pow(data.getBlockFriction(), 3);
+            movementSpeed *= 1.3F;
+            movementSpeed *= 0.16277136F / Math.pow(friction, 3);
 
-                if (verticalOffset > 0.00001 && verticalOffset < jumpHeight) {
-                    movementSpeed += 0.2;
+            if (tracker.getMoveAngle(distanceX, distanceZ, packet.getYaw()) > 135) {
+                movementSpeed /= 1.05F;
+            }
+
+            double threshold = (horizontalOffset - data.getLastDistance()) / movementSpeed;
+
+            if (data.isLastOnGround()) {
+                if (threshold >= 1.2D) {
+                    this.flag(player, "speed is too high (" + threshold + ")");
                 }
-            } else {
-                movementSpeed = 0.026;
-                data.setBlockFriction(0.91);
             }
 
-            final double friction = (horizontalOffset - data.getLastDistance()) / movementSpeed;
-
-            if (friction >= 1.0D) {
-                this.flag(player, "friction is too high (" + friction + ")");
-            }
-
-            data.setLastDistance(horizontalOffset * data.getBlockFriction());
-            data.setBlockFriction(tracker.getFriction(new Location(player.getWorld(), data.getLastX(), data.getLastY(), data.getLastZ())) * 0.91);
-
-            this.updateData(data, packet);
+            data.setLastDistance(horizontalOffset * friction);
+            this.updateData(data, packet, tracker);
         }
     }
 
@@ -98,13 +94,13 @@ public class SpeedA extends Check<SpeedA, SpeedAData> {
      * @param data   the data to update
      * @param packet the packet to update the data to
      */
-    private void updateData(SpeedAData data, PlayInFlyingPacket packet) {
+    private void updateData(SpeedAData data, PlayInFlyingPacket packet, PlayerStateTracker tracker) {
         final Player player = packet.getPlayer();
 
         data.setLastX(packet.getX());
         data.setLastY(packet.getY());
         data.setLastZ(packet.getZ());
 
-        data.setLastOnGround(player.isOnGround());
+        data.setLastOnGround(tracker.isOnGround(player));
     }
 }

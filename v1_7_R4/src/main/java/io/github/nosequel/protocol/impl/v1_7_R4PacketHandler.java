@@ -3,16 +3,24 @@ package io.github.nosequel.protocol.impl;
 import io.github.nosequel.anticheat.protocol.PacketHandler;
 import io.github.nosequel.anticheat.protocol.WrongTypeException;
 import io.github.nosequel.anticheat.protocol.packets.PlayInFlyingPacket;
+import io.github.nosequel.anticheat.protocol.packets.PlayInPacketAnimation;
+import io.github.nosequel.anticheat.protocol.packets.use.EntityUseAction;
+import io.github.nosequel.anticheat.protocol.packets.use.PlayInUseEntityPacket;
+import net.minecraft.server.v1_7_R4.Entity;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.NetworkManager;
 import net.minecraft.server.v1_7_R4.Packet;
+import net.minecraft.server.v1_7_R4.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
+import net.minecraft.server.v1_7_R4.PacketPlayInUseEntity;
 import net.minecraft.server.v1_7_R4.PlayerConnection;
+import net.minecraft.server.v1_7_R4.WorldServer;
 import net.minecraft.util.io.netty.channel.Channel;
 import net.minecraft.util.io.netty.channel.ChannelDuplexHandler;
 import net.minecraft.util.io.netty.channel.ChannelHandlerContext;
 import net.minecraft.util.io.netty.channel.ChannelPipeline;
 import net.minecraft.util.io.netty.channel.ChannelPromise;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -116,6 +124,10 @@ public class v1_7_R4PacketHandler extends PacketHandler {
             if(flying.j()) {
                 this.handle(this.toFlyingPacket(player, packet));
             }
+        } else if(packet instanceof PacketPlayInUseEntity) {
+            this.handle(this.toUsePacket(player, packet));
+        } else if(packet instanceof PacketPlayInArmAnimation) {
+            this.handle(this.toAnimationPacket(player, packet));
         }
     }
 
@@ -155,5 +167,48 @@ public class v1_7_R4PacketHandler extends PacketHandler {
         final float pitch = packet.h();
 
         return new PlayInFlyingPacket(player, System.currentTimeMillis(), x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Convert an object to a {@link PlayInUseEntityPacket}.
+     *
+     * @param player the player the packet is for
+     * @param object the object to convert
+     * @return the play in flying packet
+     * @throws WrongTypeException thrown if the provided {@link T} object is of a wrong type
+     */
+    @Override
+    public <T> PlayInUseEntityPacket toUsePacket(Player player, T object) throws WrongTypeException {
+        if (!(object instanceof PacketPlayInUseEntity)) {
+            throw new WrongTypeException(object.getClass() + " is not PacketPlayInUseEntity", this.getClass());
+        }
+
+        final PacketPlayInUseEntity packet = (PacketPlayInUseEntity) object;
+        final WorldServer world = ((CraftWorld) player.getLocation().getWorld()).getHandle();
+
+        final Entity entity = packet.a(world);
+        final EntityUseAction action = EntityUseAction.valueOf(packet.c().name());
+
+        return new PlayInUseEntityPacket(player, System.currentTimeMillis(), entity.getBukkitEntity(), action);
+    }
+
+    /**
+     * Convert an object to a {@link PlayInPacketAnimation}.
+     *
+     * @param player the player the packet is for
+     * @param object the object to convert
+     * @return the play in flying packet
+     * @throws WrongTypeException thrown if the provided {@link T} object is of a wrong type
+     */
+    @Override
+    public <T> PlayInPacketAnimation toAnimationPacket(Player player, T object) throws WrongTypeException {
+        if (!(object instanceof PacketPlayInArmAnimation)) {
+            throw new WrongTypeException(object.getClass() + " is not PacketPlayInArmAnimation", this.getClass());
+        }
+
+        final PacketPlayInArmAnimation packet = (PacketPlayInArmAnimation) object;
+        final boolean digging = false;
+
+        return new PlayInPacketAnimation(player, System.currentTimeMillis(), digging);
     }
 }
