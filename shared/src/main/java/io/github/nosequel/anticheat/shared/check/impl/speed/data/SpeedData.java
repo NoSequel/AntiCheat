@@ -1,30 +1,30 @@
 package io.github.nosequel.anticheat.shared.check.impl.speed.data;
 
-import io.github.nosequel.anticheat.shared.check.impl.speed.SpeedA;
-import io.github.nosequel.anticheat.shared.data.CheckData;
+import io.github.nosequel.anticheat.shared.check.Check;
+import io.github.nosequel.anticheat.shared.data.PlayerCheckData;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SpeedAData extends CheckData<SpeedA> {
+public abstract class SpeedData<T extends Check> extends PlayerCheckData<T> {
 
     private double lastDistance;
 
-    private boolean lastChecked;
     private boolean lastOnGround;
 
     private double lastX;
     private double lastY;
     private double lastZ;
 
+    private double blockFriction;
+
     /**
-     * Get the type of the check
-     *
-     * @return the type
+     * Setup the data in the check
      */
     @Override
-    public Class<SpeedA> getType() {
-        return SpeedA.class;
+    public void setup() {
+        this.blockFriction = 0.91F;
     }
 }

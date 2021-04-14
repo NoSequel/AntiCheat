@@ -111,7 +111,11 @@ public class v1_7_R4PacketHandler extends PacketHandler {
      */
     private void listenToPacket(Player player, Packet packet) throws WrongTypeException {
         if(packet instanceof PacketPlayInFlying) {
-            this.handle(this.toFlyingPacket(player, packet));
+            final PacketPlayInFlying flying = (PacketPlayInFlying) packet;
+
+            if(flying.j()) {
+                this.handle(this.toFlyingPacket(player, packet));
+            }
         }
     }
 

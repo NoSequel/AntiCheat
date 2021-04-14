@@ -31,6 +31,13 @@ public @interface CheckData {
     int maxViolations() default 20;
 
     /**
+     * Get the max threshold to flag
+     *
+     * @return the threshold
+     */
+    int flagThreshold() default 10;
+
+    /**
      * Check if the check has auto-ban enabled
      *
      * @return whether it does or not
