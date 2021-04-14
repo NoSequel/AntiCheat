@@ -1,7 +1,8 @@
 package io.github.nosequel.anticheat.shared.check;
 
 import io.github.nosequel.anticheat.protocol.PacketHandler;
-import io.github.nosequel.anticheat.shared.check.impl.DebugCheck;
+import io.github.nosequel.anticheat.shared.check.impl.speed.SpeedA;
+import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,8 @@ public class CheckHandler {
      *
      * @param handler the handler
      */
-    public CheckHandler(PacketHandler handler) {
-        this.register(new DebugCheck(), handler);
+    public CheckHandler(PacketHandler handler, PlayerDataHandler playerDataHandler) {
+        this.register(new SpeedA(playerDataHandler), handler);
     }
 
     /**

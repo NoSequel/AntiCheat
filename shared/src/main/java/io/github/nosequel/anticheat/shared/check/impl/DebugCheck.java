@@ -4,21 +4,29 @@ import io.github.nosequel.anticheat.protocol.Packet;
 import io.github.nosequel.anticheat.protocol.packets.PlayInFlyingPacket;
 import io.github.nosequel.anticheat.shared.check.Check;
 import io.github.nosequel.anticheat.shared.check.CheckData;
+import io.github.nosequel.anticheat.shared.data.PlayerData;
+import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
 
 @CheckData(name = "debug")
 public class DebugCheck extends Check {
 
+    public DebugCheck(PlayerDataHandler handler) {
+        super(handler);
+    }
+
     /**
-     * Handle a packet
+     * Handle a packet by a player
+     * <p>
+     * Called from the PacketListener#handle method,
+     * but with a provided {@link PlayerData} object
      *
-     * @param packet the packet to handle
+     * @param playerData the player data
+     * @param object     the packet to handle
      */
     @Override
-    public void handle(Packet packet) {
-        if(packet instanceof PlayInFlyingPacket) {
-            this.flag(packet.getPlayer(), "the player is cheater");
-        } else {
-            this.flag(packet.getPlayer(), "hes cheating because iti snt lay in flying packet...");
+    public void handle(PlayerData playerData, Packet object) {
+        if (object instanceof PlayInFlyingPacket) {
+
         }
     }
 }
