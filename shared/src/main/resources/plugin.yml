@@ -1,0 +1,4 @@
+name: AntiCheat
+version: ${pom.version}
+author: NV6
+main: io.github.nosequel.anticheat.shared.AnticheatPlugin

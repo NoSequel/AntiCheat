@@ -61,4 +61,22 @@ public class PlayInFlyingPacket extends Packet {
     public double getZ() {
         return z;
     }
+
+    /**
+     * Get the yaw of the player's camera
+     *
+     * @return the yaw
+     */
+    public float getYaw() {
+        return yaw;
+    }
+
+    /**
+     * Get the pitch of the player's camera
+     *
+     * @return the pitch
+     */
+    public float getPitch() {
+        return pitch;
+    }
 }
