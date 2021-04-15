@@ -110,6 +110,34 @@ public class v1_7_R4PacketHandler extends PacketHandler {
         }
     }
 
+
+    /**
+     * Disable packet listening for a player.
+     * <p>
+     * This should be called whenever the player disconnects
+     * from the server, so the handler doesn't have to listen
+     * to it's packets anymore.
+     *
+     * @param player the player to cancel it for
+     */
+    @Override
+    public void cancelPacketListening(Player player) {
+        final PlayerConnection connection = this.getPlayerConnection(player);
+        final NetworkManager networkManager = connection.networkManager;
+
+        try {
+            final Field channelField = networkManager.getClass().getDeclaredField("m");
+            channelField.setAccessible(true);
+
+            final Channel channel = (Channel) channelField.get(networkManager);
+            final ChannelPipeline pipeline = channel.pipeline();
+
+            channel.eventLoop().submit(() -> pipeline.remove(player.getName()));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Listen to a packet
      *
@@ -129,20 +157,6 @@ public class v1_7_R4PacketHandler extends PacketHandler {
         } else if(packet instanceof PacketPlayInArmAnimation) {
             this.handle(this.toAnimationPacket(player, packet));
         }
-    }
-
-    /**
-     * Disable packet listening for a player.
-     * <p>
-     * This should be called whenever the player disconnects
-     * from the server, so the handler doesn't have to listen
-     * to it's packets anymore.
-     *
-     * @param player the player to cancel it for
-     */
-    @Override
-    public void cancelPacketListening(Player player) {
-        // not required in this implementation.
     }
 
     /**
