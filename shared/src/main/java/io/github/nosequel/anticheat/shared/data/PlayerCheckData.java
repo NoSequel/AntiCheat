@@ -2,7 +2,7 @@ package io.github.nosequel.anticheat.shared.data;
 
 import io.github.nosequel.anticheat.shared.check.Check;
 
-public abstract class PlayerCheckData<T extends Check> {
+public abstract class PlayerCheckData<T extends Check<?, ?>> {
 
     /**
      * Setup the data in the check

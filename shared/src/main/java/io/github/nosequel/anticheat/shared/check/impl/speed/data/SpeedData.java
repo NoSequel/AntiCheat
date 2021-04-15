@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class SpeedData<T extends Check> extends PlayerCheckData<T> {
+public abstract class SpeedData<T extends Check<?, ?>> extends PlayerCheckData<T> {
 
     private double lastDistance;
 

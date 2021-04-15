@@ -39,7 +39,7 @@ public class PlayerData {
      * @return the check or null
      */
     @SuppressWarnings("unchecked")
-    public  <T extends Check> PlayerCheckData<T> findData(Class<T> type) {
+    public  <T extends Check<?, ?>> PlayerCheckData<T> findData(Class<T> type) {
         return (PlayerCheckData<T>) this.data.get(type);
     }
 }

@@ -4,7 +4,6 @@ import io.github.nosequel.anticheat.protocol.Packet;
 import io.github.nosequel.anticheat.protocol.packets.PlayInPacketAnimation;
 import io.github.nosequel.anticheat.shared.check.Check;
 import io.github.nosequel.anticheat.shared.check.impl.autoclicker.data.AutoclickerData;
-import io.github.nosequel.anticheat.shared.data.PlayerCheckData;
 import io.github.nosequel.anticheat.shared.data.PlayerData;
 import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
 

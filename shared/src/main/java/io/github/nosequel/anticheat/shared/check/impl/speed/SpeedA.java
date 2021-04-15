@@ -11,8 +11,10 @@ import io.github.nosequel.anticheat.shared.data.PlayerCheckData;
 import io.github.nosequel.anticheat.shared.data.PlayerData;
 import io.github.nosequel.anticheat.shared.data.PlayerDataHandler;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 
+/**
+ * General idea taken from Nemesis (sim0n's anticheat), https://github.com/sim0n/Nemesis/blob/main/src/main/java/dev/sim0n/anticheat/check/impl/speed/Speed.java.
+ */
 @CheckData(name = "Speed A", flagThreshold = 5, experimental = true)
 public class SpeedA extends Check<SpeedA, SpeedAData> {
 
@@ -62,19 +64,6 @@ public class SpeedA extends Check<SpeedA, SpeedAData> {
             data.setLastDistance(horizontalOffset * friction);
             this.updateData(data, packet, tracker);
         }
-    }
-
-    /**
-     * Get the jump boost value of the player
-     *
-     * @param player the player to get the jump boost of
-     * @return the jump boost value
-     */
-    private double getJumpBoost(Player player) {
-        return player.getActivePotionEffects().stream()
-                .filter(potionEffect -> potionEffect.getType().equals(PotionEffectType.JUMP))
-                .map(potionEffect -> potionEffect.getAmplifier() + 1)
-                .findFirst().orElse(0);
     }
 
     /**
