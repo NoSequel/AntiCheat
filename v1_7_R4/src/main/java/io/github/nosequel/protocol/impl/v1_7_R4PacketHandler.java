@@ -206,9 +206,6 @@ public class v1_7_R4PacketHandler extends PacketHandler {
             throw new WrongTypeException(object.getClass() + " is not PacketPlayInArmAnimation", this.getClass());
         }
 
-        final PacketPlayInArmAnimation packet = (PacketPlayInArmAnimation) object;
-        final boolean digging = false;
-
-        return new PlayInPacketAnimation(player, System.currentTimeMillis(), digging);
+        return new PlayInPacketAnimation(player, System.currentTimeMillis());
     }
 }
